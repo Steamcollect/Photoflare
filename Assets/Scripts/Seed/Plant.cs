@@ -7,6 +7,12 @@ public class Plant : MonoBehaviour
     [SerializeField] float growUpTime;
     float timer;
 
+    private void Start()
+    {
+        FadePanel.Instance.SetCirclePos(transform.position);
+        FadePanel.Instance.FadeIn();
+    }
+
     public void GrowUp()
     {
         timer += Time.deltaTime;
