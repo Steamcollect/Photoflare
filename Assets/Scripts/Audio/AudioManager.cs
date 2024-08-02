@@ -30,14 +30,7 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         // Set Audio Source for Musics
-        for (int i = 0; i < playlists.Length; i++)
-        {
-            AudioSource audioSource = (gameObject.AddComponent<AudioSource>());
-            playlists[i].audioSource = audioSource;
-            audioSource.volume = playlists[i].volumMultiplier;
-
-            StartCoroutine(SetAudioSourceClip(playlists[i], playlists[i].maxLoop));
-        }
+        SetMusics();
 
         // Create Audio Object
         for (int i = 0; i < startingAudioObjectsCount; i++)
@@ -46,26 +39,8 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    IEnumerator SetAudioSourceClip(Playlist playlist, int maxLoop)
-    {
-        // Set clip
-        playlist.audioSource.clip = playlist.clips[playlist.currentClipIndex];
-        playlist.audioSource.Play();
 
-        yield return new WaitForSeconds(playlist.clips[playlist.currentClipIndex].length);
-
-        // Set clip index
-        playlist.currentClipIndex = (playlist.currentClipIndex + 1) % playlist.clips.Length;
-
-        maxLoop -= 1;
-        if(maxLoop > 0 || maxLoop == -1)
-        {
-            StartCoroutine(SetAudioSourceClip(playlist, maxLoop));
-        }
-
-        // End the loop
-    }
-
+    #region Sound
     /// <summary>
     /// Require the clip and the power of the sound
     /// </summary>
@@ -94,12 +69,45 @@ public class AudioManager : MonoBehaviour
 
     AudioSource CreateSoundsGO()
     {
-        AudioSource tmpAudioSource = new GameObject("Audio Go").AddComponent<AudioSource>();
+        AudioSource tmpAudioSource = new GameObject("Sound GO").AddComponent<AudioSource>();
         tmpAudioSource.transform.SetParent(transform);
         tmpAudioSource.outputAudioMixerGroup = soundMixerGroup;
         soundsGo.Enqueue(tmpAudioSource);
 
         return tmpAudioSource;
+    }
+    #endregion
+
+    #region Music
+    void SetMusics()
+    {
+        for (int i = 0; i < playlists.Length; i++)
+        {
+            AudioSource audioSource = (gameObject.AddComponent<AudioSource>());
+            playlists[i].audioSource = audioSource;
+            audioSource.volume = playlists[i].volumMultiplier;
+
+            StartCoroutine(SetAudioSourceClip(playlists[i], playlists[i].maxLoop));
+        }
+    }
+    IEnumerator SetAudioSourceClip(Playlist playlist, int maxLoop)
+    {
+        // Set clip
+        playlist.audioSource.clip = playlist.clips[playlist.currentClipIndex];
+        playlist.audioSource.Play();
+
+        yield return new WaitForSeconds(playlist.clips[playlist.currentClipIndex].length);
+
+        // Set clip index
+        playlist.currentClipIndex = (playlist.currentClipIndex + 1) % playlist.clips.Length;
+
+        maxLoop -= 1;
+        if(maxLoop > 0 || maxLoop == -1)
+        {
+            StartCoroutine(SetAudioSourceClip(playlist, maxLoop));
+        }
+
+        // End the loop
     }
 
     [System.Serializable]
@@ -125,4 +133,5 @@ public class AudioManager : MonoBehaviour
             this.maxLoop = maxLoop;
         }
     }
+    #endregion
 }
