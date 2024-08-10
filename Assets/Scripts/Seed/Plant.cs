@@ -9,8 +9,8 @@ public class Plant : MonoBehaviour
 
     private void Start()
     {
-        FadePanel.Instance.SetCirclePos(transform.position);
-        FadePanel.Instance.FadeIn();
+        UIManager.Instance.SetCirclePos(transform.position);
+        UIManager.Instance.FadeIn();
     }
 
     public void GrowUp()
@@ -19,7 +19,7 @@ public class Plant : MonoBehaviour
 
         if (timer >= growUpTime)
         {
-            print("Plant grow completly");
+            //print("Plant grow completly");
         }
     }
 }

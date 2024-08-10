@@ -13,11 +13,19 @@ public class PickUpController : MonoBehaviour
 
     Vector2 mousePosOffset;
 
-    Camera cam;
-
-    private void Awake()
+    Camera mainCamera;
+    Camera cam
     {
-        cam = Camera.main;
+        get
+        {
+            if (!mainCamera) mainCamera = Camera.main;
+            return mainCamera;
+        }
+    }
+
+    void Awake()
+    {
+        mainCamera = Camera.main;
     }
 
     private void Update()

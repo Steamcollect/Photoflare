@@ -8,15 +8,19 @@ public class FadePanel : MonoBehaviour
     [SerializeField] RectTransform circle;
     [SerializeField] RectTransform background;
 
-    Camera cam;
-
-    public static FadePanel Instance;
-
-    private void Awake()
+    Camera mainCamera;
+    Camera cam
     {
-        cam = Camera.main;
+        get
+        {
+            if (!mainCamera) mainCamera = Camera.main;
+            return mainCamera;
+        }
+    }
 
-        Instance = this;
+    void Awake()
+    {
+        mainCamera = Camera.main;
     }
 
     private void Start()
@@ -32,11 +36,13 @@ public class FadePanel : MonoBehaviour
 
     public void FadeIn()
     {
+        circle.sizeDelta = Vector2.zero;
         circle.gameObject.SetActive(true);
 
         float screenSize = Screen.width > Screen.height ? Screen.width : Screen.height;
         float targetSize = screenSize / 2.7f;
-             
+
+        circle.DOKill();
         circle.DOSizeDelta(new Vector2(targetSize,targetSize), .8f).OnComplete(()=>
         {
             targetSize = screenSize / 3f;
@@ -58,6 +64,7 @@ public class FadePanel : MonoBehaviour
         circle.gameObject.SetActive(true);
 
         float targetSize = 0;
+        circle.DOKill();
         circle.DOSizeDelta(new Vector2(targetSize, targetSize), 1.2f);
     }
 }

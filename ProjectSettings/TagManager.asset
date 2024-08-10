@@ -7,6 +7,7 @@ TagManager:
   - Plant
   - Mirror
   - Portal
+  - GameManagement
   layers:
   - Default
   - TransparentFX
