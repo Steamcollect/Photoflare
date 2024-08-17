@@ -4,14 +4,18 @@ public class GameManagement : MonoBehaviour
 {
     [SerializeField] LevelConfig level;
 
+    [Header("System References")]
     [SerializeField] GameObject managementPrefabs;
-    UIManager uiManager;
 
     private void Awake()
     {
         SetupDontDestroyOnLoad();
+    }
 
-        uiManager.FadeIn();
+    private void Start()
+    {
+        UIManager.Instance.FadeIn();
+        AudioManager.Instance.SetMusicsGO(level.playlist);
 
         Destroy(gameObject);
     }
@@ -24,7 +28,5 @@ public class GameManagement : MonoBehaviour
         {
             DontDestroyOnLoad(Instantiate(managementPrefabs));
         }
-
-        uiManager = management.GetComponentInChildren<UIManager>();
     }
 }

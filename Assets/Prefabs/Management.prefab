@@ -331,19 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce3ed9b388f25c449be0df3d397f55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playlists:
-  - volumMultiplier: 0.6
-    maxLoop: -1
-    clips:
-    - {fileID: 8300000, guid: 272ee145a9acca64eb4d95cfb995e977, type: 3}
-    audioSource: {fileID: 0}
-    currentClipIndex: 0
-  - volumMultiplier: 1
-    maxLoop: -1
-    clips:
-    - {fileID: 8300000, guid: 98ad45d5a6ed50e4693d6802cb1888ca, type: 3}
-    audioSource: {fileID: 0}
-    currentClipIndex: 0
+  transitionTime: 3
   audioMixer: {fileID: 24100000, guid: 65ed2e06bc290224b8076fcdca744aec, type: 2}
   musicMixerGroup: {fileID: 4775611977824095123, guid: 65ed2e06bc290224b8076fcdca744aec, type: 2}
   soundMixerGroup: {fileID: -3074233078418991932, guid: 65ed2e06bc290224b8076fcdca744aec, type: 2}

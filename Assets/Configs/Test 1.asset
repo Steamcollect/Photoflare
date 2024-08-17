@@ -14,8 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelName: Test 1
   playlist:
-  - volumMultiplier: 0
-    maxLoop: 0
-    clips: []
+  - volum: 0.6
+    maxLoop: -1
+    clips:
+    - {fileID: 8300000, guid: 272ee145a9acca64eb4d95cfb995e977, type: 3}
+    audioSource: {fileID: 0}
+    currentClipIndex: 0
+  - volum: 1
+    maxLoop: -1
+    clips:
+    - {fileID: 8300000, guid: 98ad45d5a6ed50e4693d6802cb1888ca, type: 3}
     audioSource: {fileID: 0}
     currentClipIndex: 0

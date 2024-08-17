@@ -150,17 +150,19 @@ public class LightController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+#if UNITY_EDITOR
         if (Application.isPlaying)
         {
             for (int i = 0; i < rayLights.Count; i++)
             {
                 for (int j = 0; j < rayLights[i].Count; j++)
                 {
-                    if (i < rayLights[i].Count - 1) Gizmos.DrawLine(rayLights[i][j].position, rayLights[i][j + 1].position);
+                    if (j < rayLights[i].Count - 1) Gizmos.DrawLine(rayLights[i][j].position, rayLights[i][j + 1].position);
                 }
             }
         }
     }
+#endif
 }
 
 public class LightPoint

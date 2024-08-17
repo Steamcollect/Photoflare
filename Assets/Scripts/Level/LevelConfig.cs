@@ -8,5 +8,5 @@ public class LevelConfig : ScriptableObject
     [SerializeField] string levelName;
 
     [Header("Musics")]
-    [SerializeField] AudioManager.Playlist[] playlist;
+    public AudioManager.Playlist[] playlist;
 }

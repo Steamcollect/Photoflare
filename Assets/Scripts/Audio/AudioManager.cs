@@ -1,12 +1,15 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     [Header("Music References")]
-    [SerializeField] Playlist[] playlists;
+    [SerializeField] float transitionTime;
+    List<Playlist> playlists = new List<Playlist>();
 
     [Header("Audio References")]
     [SerializeField] AudioMixer audioMixer;
@@ -31,32 +34,62 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        // Set Audio Source for Musics
-        SetMusicsGO();
-
         // Create Audio Object
         SetSoundsGO();
     }
 
     #region Music
-    void SetMusicsGO()
+    public void SetMusicsGO(Playlist[] newPlaylists)
     {
-        musicsGoParent = new GameObject("======MUSIC GO======").transform;
-        musicsGoParent.SetParent(transform);
-
-        for (int i = 0; i < playlists.Length; i++)
+        // Setup parent
+        if(musicsGoParent == null)
         {
-            AudioSource audioSource = new GameObject("Music GO").AddComponent<AudioSource>();
-            audioSource.transform.SetParent(musicsGoParent);
+            musicsGoParent = new GameObject("======MUSICS GO======").transform;
+            musicsGoParent.SetParent(transform);
+        }
 
-            // Set Audio source references
-            audioSource.volume = playlists[i].volumMultiplier;
-            audioSource.outputAudioMixerGroup = musicMixerGroup;
-            playlists[i].audioSource = audioSource;
+        // Change playlist if its different
+        if(playlists != newPlaylists.ToList()) StartCoroutine(SetNewPlaylists(newPlaylists));
+    }
 
-            StartCoroutine(SetAudioSourceClip(playlists[i], playlists[i].maxLoop));
+    IEnumerator SetNewPlaylists(Playlist[] newPlaylists)
+    {
+        // Stop current playlists
+        for (int i = 0; i < playlists.Count; i++)
+        {
+            playlists[i].FadeOut(transitionTime / 2);
+        }
+        yield return new WaitForSeconds(transitionTime / 2);
+
+        // Clear current playlists
+        for (int i = 0; i < playlists.Count; i++)
+        {
+            Destroy(playlists[i].audioSource.gameObject);
+        }
+        playlists.Clear();
+
+        // Setup new playlists
+        for (int i = 0; i < newPlaylists.Length; i++)
+        {
+            playlists.Add(CreatePlaylistGO(newPlaylists[i]));
+            playlists[i].timerCoroutine = StartCoroutine(SetAudioSourceClip(playlists[i], playlists[i].maxLoop));
+            playlists[i].FadeIn(playlists[i].volum, transitionTime / 2);
         }
     }
+
+    Playlist CreatePlaylistGO(Playlist playlist)
+    {
+        // Create GameObject
+        playlist.audioSource = new GameObject("Music GO").AddComponent<AudioSource>();
+        playlist.audioSource.transform.SetParent(musicsGoParent);
+
+        // Set Audio source references
+        playlist.audioSource.outputAudioMixerGroup = musicMixerGroup;
+        playlist.audioSource.volume = 0;
+
+        return playlist;
+    }
+
     IEnumerator SetAudioSourceClip(Playlist playlist, int maxLoop)
     {
         // Set clip
@@ -75,12 +108,13 @@ public class AudioManager : MonoBehaviour
         }
 
         // End the loop
+        playlist.timerCoroutine = null;
     }
 
     [System.Serializable]
     public class Playlist
     {
-        [Range(0,1)]public float volumMultiplier = 1;
+        [Range(0,1)]public float volum = 1;
         [Tooltip("If value equal \"-1\" so infinite loop")] public int maxLoop = -1;
         [Space(10)]
         public AudioClip[] clips;
@@ -88,15 +122,28 @@ public class AudioManager : MonoBehaviour
         [HideInInspector] public AudioSource audioSource;
         [HideInInspector] public int currentClipIndex = 0;
 
-        /// <summary>
-        /// Require Clips to play and the volum multiplier
-        /// </summary>
-        /// <param name="clips"></param>
-        /// <param name="volumMultiplier"></param>
+        [HideInInspector] public Coroutine timerCoroutine;
+
+        public void FadeOut(float time)
+        {
+            audioSource.DOKill();
+            audioSource.DOFade(0, time).OnComplete(()=>
+            {
+                audioSource.gameObject.SetActive(false);
+            });
+        }
+        public void FadeIn(float value, float time)
+        {
+            audioSource.gameObject.SetActive(true);
+
+            audioSource.DOKill();
+            audioSource.DOFade(value, time);
+        }
+
         public Playlist(AudioClip[] clips, float volumMultiplier, int maxLoop)
         {
             this.clips = clips;
-            this.volumMultiplier = volumMultiplier;
+            this.volum = volumMultiplier;
             this.maxLoop = maxLoop;
         }
     }
